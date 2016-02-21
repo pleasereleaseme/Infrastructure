@@ -3,7 +3,7 @@
 # This code currently not working!!!! See https://disqus.com/home/discussion/thewindowsazureproductsite/deploy_an_application_with_azure_resource_manager_template/#comment-2522268046
 #
 
-workflow Create-Resources
+workflow Create-WindowsServer2012R2Datacenter
 {
 	param ([string[]] $vms, [string] $resourceGroupName, [string] $solutionRoot)
 
@@ -32,4 +32,4 @@ New-AzureRmResourceGroup -Name $resourceGroupName -Location westeurope -Force
 
 $virtualmachines = "$resourceGroupName-SQL", "$resourceGroupName-IIS"
 
-Create-Resources -vms $virtualmachines -resourceGroupName $resourceGroupName -solutionRoot $PSScriptRoot
+Create-WindowsServer2012R2Datacenter -vms $virtualmachines -resourceGroupName $resourceGroupName -solutionRoot $PSScriptRoot
