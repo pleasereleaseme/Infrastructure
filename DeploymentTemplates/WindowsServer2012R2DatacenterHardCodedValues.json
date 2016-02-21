@@ -1,0 +1,144 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "prmdatstorageaccounts",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "West Europe",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "properties": {
+        "accountType": "Standard_LRS"
+      }
+    },
+    {
+      "name": "PRM-DAT-AIO",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "West Europe",
+      "apiVersion": "2015-06-15",
+      "tags": {
+        "displayName": "NetworkSecurityGroup"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1000,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PRM-DAT-AIO",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "West Europe",
+      "apiVersion": "2015-06-15",
+      "tags": {
+        "displayName": "PublicIPAddress"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "prm-dat-aio"
+        }
+      }
+    },
+    {
+      "name": "prm-dat-aio123",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "West Europe",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', 'PRM-DAT-AIO')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', 'PRM-DAT-AIO')]"
+      ],
+      "tags": {
+        "displayName": "NetworkInterface"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "/subscriptions/adb4a497-7e0b-4956-ab9c-e4a160567809/resourceGroups/PRM-COMMON/providers/Microsoft.Network/virtualNetworks/prmvirtualnetwork/subnets/default"
+              },
+              "publicIPAddress": {
+                "id": "/subscriptions/adb4a497-7e0b-4956-ab9c-e4a160567809/resourceGroups/PRM-DAT/providers/Microsoft.Network/publicIPAddresses/PRM-DAT-AIO"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "/subscriptions/adb4a497-7e0b-4956-ab9c-e4a160567809/resourceGroups/PRM-DAT/providers/Microsoft.Network/networkSecurityGroups/PRM-DAT-AIO"
+        }
+      }
+    }//,
+    //{
+    //  "name": "PRM-DAT-AIO",
+    //  "type": "Microsoft.Compute/virtualMachines",
+    //  "location": "West Europe",
+    //  "apiVersion": "2015-06-15",
+    //  "dependsOn": [
+    //    "[concat('Microsoft.Storage/storageAccounts/', 'prmdatstorageaccounts')]",
+    //    "[concat('Microsoft.Network/networkInterfaces/', 'prm-dat-aio123')]"
+    //  ],
+    //  "tags": {
+    //    "displayName": "VirtualMachine"
+    //  },
+    //  "properties": {
+    //    "hardwareProfile": {
+    //      "vmSize": "Standard_DS1"
+    //    },
+    //    "osProfile": {
+    //      "computerName": "PRM-DAT-AIO",
+    //      "adminUsername": "prmadmin",
+    //      "adminPassword": "Mystrongpasswordhere9"
+    //    },
+    //    "storageProfile": {
+    //      "imageReference": {
+    //        "publisher": "MicrosoftWindowsServer",
+    //        "offer": "WindowsServer",
+    //        "sku": "2012-R2-Datacenter",
+    //        "version": "latest"
+    //      },
+    //      "osDisk": {
+    //        "name": "PRM-DAT-AIO",
+    //        "vhd": {
+    //          "uri": "https://prmdatstorageaccounts.blob.core.windows.net/vhds/PRM-DAT-AIO.vhd"
+    //        },
+    //        "caching": "ReadWrite",
+    //        "createOption": "FromImage"
+    //      }
+    //    },
+    //    "networkProfile": {
+    //      "networkInterfaces": [
+    //        {
+    //          "id": "/subscriptions/adb4a497-7e0b-4956-ab9c-e4a160567809/resourceGroups/PRM-DAT/providers/Microsoft.Network/networkInterfaces/prm-dat-aio123"
+    //        }
+    //      ]
+    //    }
+    //  }
+    //}
+  ],
+  "outputs": {
+  }
+}

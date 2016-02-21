@@ -1,0 +1,172 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+    "nodeName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "vmSize": {
+      "type": "string",
+      "minLength": 1,
+      "allowedValues": [
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4"
+      ]
+    }
+  },
+  "variables": {
+    "nodeNameToUpper": "[toUpper(parameters('nodeName'))]",
+    "nodeNameToLower": "[toLower(parameters('nodeName'))]",
+    "storageAccountName": "[concat(replace(variables('nodeNameToLower'),'-',''), 'storageaccount')]",
+    "networkInterfaceName": "[concat(variables('nodeNameToLower'), '123')]",
+    // Note the hard coded external resource group and virtual network which you might need to change
+    "virtualNetworkSubnetName": "[concat(resourceId('PRM-COMMON', 'Microsoft.Network/virtualNetworks', 'prmvirtualnetwork'), '/subnets/', 'default')]",
+    "vmAdminUsername": "[concat(replace(variables('nodeNameToLower'),'-',''), 'admin')]",
+    "vmAdminPassword": "[concat(replace(variables('nodeNameToUpper'),'-',''), 'password111')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "properties": {
+        "accountType": "Standard_LRS"
+      }
+    },
+    {
+      "name": "[variables('nodeNameToUpper')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "tags": {
+        "displayName": "NetworkSecurityGroup"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1000,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('nodeNameToUpper')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "tags": {
+        "displayName": "PublicIPAddress"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('nodeNameToLower')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('nodeNameToUpper'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('nodeNameToUpper'))]"
+      ],
+      "tags": {
+        "displayName": "NetworkInterface"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('virtualNetworkSubnetName')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('nodeNameToUpper'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nodeNameToUpper'))]"
+        }
+      }
+    },
+    {
+      "name": "[variables('nodeNameToUpper')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
+      ],
+      "tags": {
+        "displayName": "VirtualMachine"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_DS1"
+        },
+        "osProfile": {
+          "computerName": "[variables('nodeNameToUpper')]",
+          "adminUsername": "[variables('vmAdminUsername')]",
+          "adminPassword": "[variables('vmAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('nodeNameToUpper')]",
+            "vhd": {
+              "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('nodeNameToUpper'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+    // Can use outputs for debugging purposes
+    "virtualNetworkSubnetName": {
+      "type": "string",
+      "value": "[variables('virtualNetworkSubnetName')]"
+    }
+  }
+}
