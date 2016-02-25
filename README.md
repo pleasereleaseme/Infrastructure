@@ -1,1 +1,1 @@
-This repo creates the Azure infrastructure that is used in my blog post series at http://pleasereleaseme.net/continuous-delivery-with-tfs-vsts/
+This is the code that is used in my blog post series at http://pleasereleaseme.net/continuous-delivery-with-tfs-vsts and specifically in the http://pleasereleaseme.net/continuous-delivery-with-tfs-vsts-infrastructure-as-code-with-azure-resource-manager-templates post.
