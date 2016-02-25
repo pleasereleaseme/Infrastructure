@@ -20,6 +20,7 @@ Foreach ($vm in $vmsToCreate) {
 								   -Mode Incremental `
 								   -TemplateParameterObject @{
 									   nodeName = $vm;
-									   vmSize = 'Standard_DS1'
+									   vmSize = 'Standard_DS1';
+									   vmAdminPassword = 'MySuperSecurePassword'
 								   }
 }

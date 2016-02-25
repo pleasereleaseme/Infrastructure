@@ -18,5 +18,6 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName `
 								   -Mode Incremental `
 								   -TemplateParameterObject @{
 									   nodeName = "$resourceGroupName-AIO";
-									   vmSize = 'Standard_DS1'
+									   vmSize = 'Standard_DS1';
+									   vmAdminPassword = 'MySuperSecurePassword'
 								   }

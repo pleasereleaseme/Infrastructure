@@ -16,6 +16,9 @@
         "Standard_DS3",
         "Standard_DS4"
       ]
+    },
+    "vmAdminPassword": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -25,8 +28,7 @@
     "networkInterfaceName": "[concat(variables('nodeNameToLower'), '123')]",
     // Note the hard coded external resource group and virtual network which you might need to change
     "virtualNetworkSubnetName": "[concat(resourceId('PRM-COMMON', 'Microsoft.Network/virtualNetworks', 'prmvirtualnetwork'), '/subnets/', 'default')]",
-    "vmAdminUsername": "[concat(replace(variables('nodeNameToLower'),'-',''), 'admin')]",
-    "vmAdminPassword": "[concat(replace(variables('nodeNameToUpper'),'-',''), 'password111')]"
+    "vmAdminUsername": "[concat(replace(variables('nodeNameToLower'),'-',''), 'admin')]"
   },
   "resources": [
     {
@@ -134,7 +136,7 @@
         "osProfile": {
           "computerName": "[variables('nodeNameToUpper')]",
           "adminUsername": "[variables('vmAdminUsername')]",
-          "adminPassword": "[variables('vmAdminPassword')]"
+          "adminPassword": "[parameters('vmAdminPassword')]"
         },
         "storageProfile": {
           "imageReference": {

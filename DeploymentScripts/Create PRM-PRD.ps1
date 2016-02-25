@@ -20,7 +20,8 @@ workflow Create-WindowsServer2012R2Datacenter
 									   -Mode Incremental `
 									   -TemplateParameterObject @{
 										   nodeName = $vm;
-										   vmSize = 'Standard_DS1'
+										   vmSize = 'Standard_DS1';
+										   vmAdminPassword = 'MySuperSecurePassword'
 									   }
 
 	}
