@@ -19,6 +19,9 @@
     },
     "vmAdminPassword": {
       "type": "securestring"
+    },
+    "domainAdminPassword": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -28,14 +31,15 @@
     "networkInterfaceName": "[concat(variables('nodeNameToLower'), '123')]",
     // Note the hard coded external resource group and virtual network which you might need to change
     "virtualNetworkSubnetName": "[concat(resourceId('PRM-COMMON', 'Microsoft.Network/virtualNetworks', 'prmvirtualnetwork'), '/subnets/', 'default')]",
-    "vmAdminUsername": "[concat(replace(variables('nodeNameToLower'),'-',''), 'admin')]"
+    "vmAdminUsername": "[concat(replace(variables('nodeNameToLower'),'-',''), 'admin')]",
+    "apiVersion": "2015-06-15"
   },
   "resources": [
     {
       "name": "[variables('storageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
       "dependsOn": [ ],
       "tags": {
         "displayName": "StorageAccount"
@@ -48,7 +52,7 @@
       "name": "[variables('nodeNameToUpper')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
       "tags": {
         "displayName": "NetworkSecurityGroup"
       },
@@ -74,7 +78,7 @@
       "name": "[variables('nodeNameToUpper')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
       "tags": {
         "displayName": "PublicIPAddress"
       },
@@ -89,7 +93,7 @@
       "name": "[variables('networkInterfaceName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('nodeNameToUpper'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('nodeNameToUpper'))]"
@@ -121,7 +125,7 @@
       "name": "[variables('nodeNameToUpper')]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -160,6 +164,33 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
             }
           ]
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('nodeNameToLower'),'/joindomain')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('nodeNameToUpper'))]"
+      ],
+      "tags": {
+        "displayName": "JoinDomain"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "JsonADDomainExtension",
+        "typeHandlerVersion": "1.0",
+        "settings": {
+          "Name": "prm.local",
+          "OUPath": "",
+          "User": "prm\\graham",
+          "Restart": "true",
+          "Options": "3"
+        },
+        "protectedsettings": {
+          "Password": "[parameters('domainAdminPassword')]"
         }
       }
     }

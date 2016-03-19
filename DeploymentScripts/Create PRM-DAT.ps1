@@ -5,6 +5,10 @@
 # Authentication details are abstracted away in a PS module
 Set-AzureRmAuthenticationForMsdnEnterprise
 
+$vaultname = 'prmkeyvault'
+$vmAdminPassword = Get-AzureKeyVaultSecret –VaultName $vaultname –Name VmAdminPassword
+$domainAdminPassword = Get-AzureKeyVaultSecret –VaultName $vaultname –Name DomainAdminAdminPassword
+
 $resourceGroupName = 'PRM-DAT'
 
 # Always need the resource group to be present
@@ -18,6 +22,7 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName `
 								   -Mode Incremental `
 								   -TemplateParameterObject @{
 									   nodeName = "$resourceGroupName-AIO";
-									   vmSize = 'Standard_DS1';
-									   vmAdminPassword = 'MySuperSecurePassword'
+									   vmSize = 'Standard_DS4';
+									   vmAdminPassword = $vmAdminPassword.SecretValueText;
+									   domainAdminPassword = $domainAdminPassword.SecretValueText
 								   }
