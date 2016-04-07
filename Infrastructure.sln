@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "DeploymentTemplates", "DeploymentTemplates\DeploymentTemplates.deployproj", "{CF50AC8A-3EA6-4E88-A797-CB3FB1ACC1FE}"
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "DeploymentScripts", "DeploymentScripts\DeploymentScripts.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+EndProject
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "ConfigurationScripts", "ConfigurationScripts\ConfigurationScripts.pssproj", "{32D513E7-8446-4B60-B5F7-7ED8F38890D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D513E7-8446-4B60-B5F7-7ED8F38890D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D513E7-8446-4B60-B5F7-7ED8F38890D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D513E7-8446-4B60-B5F7-7ED8F38890D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D513E7-8446-4B60-B5F7-7ED8F38890D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
