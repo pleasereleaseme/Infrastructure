@@ -175,8 +175,7 @@ Configuration LocalConfigurationManager
             # A configuration Id needs to be specified, known bug
             ConfigurationID = '3a15d863-bd25-432c-9e45-9199afecde91'
             ConfigurationMode = 'ApplyAndAutoCorrect'
-            RebootNodeIfNeeded = $True
-            DebugMode = "ForceModuleImport"    
+            RebootNodeIfNeeded = $True   
         }
 
         ResourceRepositoryShare FileShare
