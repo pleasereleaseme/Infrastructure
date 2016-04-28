@@ -25,9 +25,11 @@ Foreach ($vm in $vmsToCreate) {
 								   -Verbose `
 								   -Mode Incremental `
 								   -TemplateParameterObject @{
-									   nodeName = $vm;
+									   nodeName = "$resourceGroupName-AIO";
 									   vmSize = 'Standard_DS4';
+                                       storageAccountType = 'Standard_LRS';
 									   vmAdminPassword = $vmAdminPassword.SecretValueText;
 									   domainAdminPassword = $domainAdminPassword.SecretValueText
-								   }
+								   } `
+								   -DeploymentDebugLogLevel All
 }
