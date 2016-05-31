@@ -29,6 +29,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="ContosoUniversity.ps1" />
+    <Compile Include="PostDeploymentConfig.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
